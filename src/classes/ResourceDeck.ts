@@ -1,14 +1,15 @@
-import ResourceCard, {resourceCardColoursList} from "./ResourceCard";
+import ResourceCard, {resourceCardColoursList} from "@app/classes/ResourceCard";
+import eventsCenter from '@app/EventsCenter';
 
 export default class ResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
-    gameObject!: Phaser.GameObjects.Container;
 
     constructor(scene: Phaser.Scene) {
         super(scene);
 
         this.init();
         this.initGameObjectLogic();
+        this.render();
     }
 
     private init(): void {
@@ -16,62 +17,70 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
             for (let i = 0; i < ResourceCard.getMaxNumber(colour); i++) {
                 const texture = ResourceCard.getTextureByColour(this.scene, colour);
 
-                const card = new ResourceCard(this.scene, i * 10, index*50, texture, colour);
-                //this.cards.push(card);
-                this.add(card);
+                const card = new ResourceCard(this.scene, 0, 0, texture, colour);
+
+                card.on('pointerover', () => {
+                    card.setTint(0xff0000);
+                    // console.log(this.gameObject.parentContainer);
+                    // this.gameObject.parentContainer.bringToTop(this.gameObject);
+                });
+                card.on('pointerout', () => {
+                    card.clearTint();
+                });
+
+                card.on('pointerup', () => {
+                    // this.remove(card);
+
+                    const indexToRemove = this.cards.findIndex(cardInArray => cardInArray.id === card.id);
+                    Phaser.Utils.Array.RemoveAt(this.cards, indexToRemove);
+                    this.render();
+
+                    eventsCenter.emit('move-card-to-open-deck', card);
+                });
+
+                this.cards.push(card);
+                // this.add(card);
             }
         })
 
-        this.setVisible(false);
-        this.shuffle();
-        this.setVisible(true);
+        this.shuffleCards();
+    }
+
+    private ejectTopCard(): ResourceCard | null {
+        const card = this.cards.pop();
+
+        return card !== undefined ? card : null;
+    }
+
+    public moveFiveTopCardsToOpenDeck() {
+        for (let i=0; i < 5; i++) {
+            const card = this.ejectTopCard();
+
+            if (card !== null) {
+                eventsCenter.emit('move-card-to-open-deck', card);
+            }
+        }
     }
 
     public initGameObjectLogic() {
         this.setSize(1500, 200);
         this.setX(200);
         this.setY(200);
+    }
+
+    private render() {
+        this.removeInteractive();
+        this.removeAll();
+        this.cards.forEach((card, index) => {
+            card.setX(index * 50);
+            card.setY(index * 10);
+
+            this.add(card);
+        });
         this.setInteractive();
     }
 
-    public createGameObject(scene: Phaser.Scene): void {
-        this.gameObject = new Phaser.GameObjects.Container(scene);
-
-        let i = 0;
-        this.cards.forEach((card, index) => {
-            if (i < 10) {
-                card.createGameObject(scene, (index * 50) + 100, 0);
-                this.gameObject.add(card.getGameObject());
-            }
-
-            i++;
-        });
-
-        this.gameObject.setSize(500, 200);
-        this.gameObject.setInteractive();
-
-        // this.gameObject.bringToTop(this.gameObject.getAt(0));
-    }
-
-    // public shuffle(): void {
-    //     Phaser.Utils.Array.Shuffle(this.cards);
-    // }
-
-    public getGameObject(x?: number, y?: number, children?: Phaser.GameObjects.GameObject[]) {
-        if (x) {
-            this.gameObject.setX(x);
-        }
-
-        if (y) {
-            this.gameObject.setY(x);
-        }
-
-        if (children) {
-            children.forEach(child => {
-                this.gameObject.add(child);
-            });
-        }
-
-        return this.gameObject;
+    public shuffleCards(): void {
+        Phaser.Utils.Array.Shuffle(this.cards);
     }
 }

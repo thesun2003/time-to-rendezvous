@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -22,7 +23,12 @@ module.exports = {
     },
 
     resolve: {
-        extensions: [ '.ts', '.tsx', '.js' ]
+        extensions: [ '.ts', '.tsx', '.js' ],
+        plugins: [
+            new TsconfigPathsPlugin({
+                configFile: path.resolve(__dirname, 'tsconfig.json')
+            })
+        ],
     },
 
     output: {

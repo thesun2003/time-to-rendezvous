@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
+    "rootDir": ".",
     "outDir": "dist",
     "module": "esnext",
     "target": "es2017",
@@ -18,6 +19,9 @@
     "strict": true,
     "importHelpers": true,
     "skipLibCheck": true,
+    "paths": {
+      "@app/*": ["src/*"],
+    },
     "typeRoots": [
       "./node_modules/phaser/types"
     ],
