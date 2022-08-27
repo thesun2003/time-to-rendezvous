@@ -1,0 +1,44 @@
+{
+  "name": "time-to-rendezvous",
+  "version": "0.0.1",
+  "description": "Board game inspired by Ticket To Ride US",
+  "main": "src/app.ts",
+  "scripts": {
+    "prepare": "npx crlf --set=LF node_modules/.bin/live-server",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch & live-server --port=8085",
+    "build": "yarn build:dev",
+    "build:dev": "NODE_ENV=development webpack",
+    "build:prod": "NODE_ENV=production webpack --config webpack.prod.config.js",
+    "dev": "NODE_ENV=development webpack-dev-server --config webpack.config.js --port=8086",
+    "prod": "NODE_ENV=production webpack-dev-server",
+    "lint": "eslint src/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thesun2003/time-to-rendezvous.git"
+  },
+  "author": "Vladimir Semenov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thesun2003/time-to-rendezvous/issues"
+  },
+  "homepage": "https://github.com/thesun2003/time-to-rendezvous#readme",
+  "dependencies": {
+    "phaser": "^3.55.2",
+    "terser-webpack-plugin": "^5.3.4",
+    "webpack-merge": "^5.8.0"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "eslint": "^8.22.0",
+    "html-webpack-plugin": "^5.5.0",
+    "live-server": "^1.2.2",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.10.0"
+  }
+}
