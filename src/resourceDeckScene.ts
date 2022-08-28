@@ -21,6 +21,7 @@ export default class ResourceDeckScene extends Phaser.Scene {
         resourceCardColoursList.forEach((colour) => {
             this.load.image(`resource-card-${colour}`, `${colour}.jpeg`);
         });
+        this.load.image('resource-card-back', 'resource-card-back.png');
     }
 
     create(): void {
@@ -29,8 +30,6 @@ export default class ResourceDeckScene extends Phaser.Scene {
 
         this.openResourceDeck = new OpenResourceDeck(this);
         this.add.existing(this.openResourceDeck);
-
-        this.resourceDeck.moveFiveTopCardsToOpenDeck();
     }
 
     update(time: number): void {

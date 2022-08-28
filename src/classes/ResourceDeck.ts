@@ -3,6 +3,7 @@ import eventsCenter from '@app/EventsCenter';
 
 export default class ResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
+    backCard!: Phaser.GameObjects.Image;
 
     constructor(scene: Phaser.Scene) {
         super(scene);
@@ -19,27 +20,25 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
 
                 const card = new ResourceCard(this.scene, 0, 0, texture, colour);
 
-                card.on('pointerover', () => {
-                    card.setTint(0xff0000);
-                    // console.log(this.gameObject.parentContainer);
-                    // this.gameObject.parentContainer.bringToTop(this.gameObject);
-                });
-                card.on('pointerout', () => {
-                    card.clearTint();
-                });
+                // card.on('pointerover', () => {
+                //     card.setTint(0xff0000);
+                // });
 
-                card.on('pointerup', () => {
-                    // this.remove(card);
+                // card.on('pointerout', () => {
+                //     card.clearTint();
+                // });
 
-                    const indexToRemove = this.cards.findIndex(cardInArray => cardInArray.id === card.id);
-                    Phaser.Utils.Array.RemoveAt(this.cards, indexToRemove);
-                    this.render();
-
-                    eventsCenter.emit('move-card-to-open-deck', card);
-                });
+                // card.on('pointerup', () => {
+                //     // this.remove(card);
+                //
+                //     const indexToRemove = this.cards.findIndex(cardInArray => cardInArray.id === card.id);
+                //     Phaser.Utils.Array.RemoveAt(this.cards, indexToRemove);
+                //     this.render();
+                //
+                //     eventsCenter.emit('move-card-to-open-deck', card);
+                // });
 
                 this.cards.push(card);
-                // this.add(card);
             }
         })
 
@@ -52,31 +51,49 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
         return card !== undefined ? card : null;
     }
 
-    public moveFiveTopCardsToOpenDeck() {
-        for (let i=0; i < 5; i++) {
-            const card = this.ejectTopCard();
+    public initGameObjectLogic() {
+        this.setSize(200, 200);
+        this.setX(200);
+        this.setY(200);
 
-            if (card !== null) {
+        const texture = this.scene.textures.get(`resource-card-back`);
+        this.backCard = new Phaser.GameObjects.Image(this.scene, 0, 0, texture);
+        this.backCard.setDisplaySize(200, 300);
+        this.backCard.setInteractive();
+
+        this.backCard.on('pointerover', () => {
+            this.backCard.setDisplaySize(220, 330);
+        });
+
+        this.backCard.on('pointerout', () => {
+            // this.backCard.clearTint();
+            this.backCard.setDisplaySize(200, 300);
+        });
+
+        eventsCenter.on('request-card', this.checkAndMoveCard, this);
+    }
+
+    private checkAndMoveCard(args): void {
+        if (args.type === 'Resource') {
+            // TODO: switch to switch :-D
+            if (args.requester === 'OpenResourceDeck') {
+                const card = this.ejectTopCard();
                 eventsCenter.emit('move-card-to-open-deck', card);
             }
         }
     }
 
-    public initGameObjectLogic() {
-        this.setSize(1500, 200);
-        this.setX(200);
-        this.setY(200);
-    }
-
     private render() {
         this.removeInteractive();
         this.removeAll();
-        this.cards.forEach((card, index) => {
-            card.setX(index * 50);
-            card.setY(index * 10);
+        // this.cards.forEach((card, index) => {
+        //     card.setX(index * 50);
+        //     card.setY(index * 10);
+        //
+        //     this.add(card);
+        // });
 
-            this.add(card);
-        });
+        this.add(this.backCard);
         this.setInteractive();
     }
 

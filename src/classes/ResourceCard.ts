@@ -44,5 +44,15 @@ export default class ResourceCard extends Phaser.GameObjects.Image {
         // this.on('pointerout', () => {
         //     this.clearTint();
         // });
+
+        // TODO: resize images and replace with setScale(1.1)
+        this.on('pointerover', () => {
+            this.setDisplaySize(220, 220);
+        });
+
+        this.on('pointerout', () => {
+            // this.backCard.clearTint();
+            this.setDisplaySize(200, 200);
+        });
     }
 }
