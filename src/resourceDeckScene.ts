@@ -1,11 +1,18 @@
 import "phaser";
-import ResourceDeck from "@app/classes/ResourceDeck";
-import {resourceCardColoursList} from "@app/classes/ResourceCard";
-import OpenResourceDeck from "@app/classes/OpenResourceDeck";
+import ResourceDeck from "@app/GameObjects/ResourceDeck";
+import {resourceCardColoursList} from "@app/GameObjects/ResourceCard";
+import OpenResourceDeck from "@app/GameObjects/OpenResourceDeck";
+import Player from "@app/classes/Player";
+import Button from '@app/UI/Button';
+import eventsCenter from '@app/EventsCenter';
+import {gameState} from '@app/Stores/GameStore'
 
 export default class ResourceDeckScene extends Phaser.Scene {
     resourceDeck!: ResourceDeck;
     openResourceDeck!: OpenResourceDeck;
+    players: Array<Player> = [];
+    activePlayer!: Player;
+    activePlayerIndex: number = 0;
 
     constructor() {
         super({
@@ -14,6 +21,7 @@ export default class ResourceDeckScene extends Phaser.Scene {
     }
 
     init(/* params: any */): void {
+        gameState.activePlayerIndex = 0;
     }
 
     preload(): void {
@@ -25,14 +33,36 @@ export default class ResourceDeckScene extends Phaser.Scene {
     }
 
     create(): void {
+        // TODO: use custom cursors
+        // this.input.setDefaultCursor('url(assets/input/cursors/blue.cur), pointer');
+        // var sprite = this.add.sprite(400, 300, 'eye').setInteractive({ cursor: 'url(assets/input/cursors/pen.cur), pointer' });
+
+
         this.resourceDeck = new ResourceDeck(this);
         this.add.existing(this.resourceDeck);
 
         this.openResourceDeck = new OpenResourceDeck(this);
         this.add.existing(this.openResourceDeck);
+
+        this.players.push(new Player(this));
+        this.players.push(new Player(this));
+
+        this.players.forEach(player => {
+            this.add.existing(player.resourceDeck);
+        });
+
+        this.setActivePlayer(gameState.activePlayerIndex);
+
+        eventsCenter.on('end-player-turn', this.endPlayerTurn);
+
+        const nextPlayerButton = new Button(this, 500, 500, 'Finish turn', this.endPlayerTurn, this);
+        this.add.existing(nextPlayerButton);
     }
 
     update(time: number): void {
+        // console.log('time', time);
+
+
         // const diff: number = time - this.lastStarTime;
         //
         // if (diff > this.delta) {
@@ -46,6 +76,21 @@ export default class ResourceDeckScene extends Phaser.Scene {
         // this.info.text =
         //     this.starsCaught + " caught - " +
         //     this.starsFallen + " fallen (max 3)";
+    }
+
+    private setActivePlayer(playerIndex?: number) {
+        this.activePlayer = this.players[playerIndex ?? gameState.activePlayerIndex];
+
+        gameState.setActivePlayerId(this.activePlayer.id);
+    }
+
+    private endPlayerTurn() {
+        gameState.activePlayerIndex +=1;
+        if (gameState.activePlayerIndex > this.players.length-1) {
+            gameState.activePlayerIndex = 0;
+        }
+
+        this.setActivePlayer(gameState.activePlayerIndex);
     }
 
     private onClick2(star: Phaser.Physics.Arcade.Image): () => void {

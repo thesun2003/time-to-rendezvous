@@ -1,9 +1,13 @@
-import ResourceCard, {resourceCardColoursList} from "@app/classes/ResourceCard";
+import ResourceCard, {resourceCardColoursList} from "@app/GameObjects/ResourceCard";
 import eventsCenter from '@app/EventsCenter';
+import {autorun} from "mobx";
+import {gameState} from '@app/Stores/GameStore'
 
 export default class ResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
     backCard!: Phaser.GameObjects.Image;
+    textObject!: Phaser.GameObjects.Text;
+    textObject1!: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene) {
         super(scene);
@@ -19,40 +23,25 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
                 const texture = ResourceCard.getTextureByColour(this.scene, colour);
 
                 const card = new ResourceCard(this.scene, 0, 0, texture, colour);
-
-                // card.on('pointerover', () => {
-                //     card.setTint(0xff0000);
-                // });
-
-                // card.on('pointerout', () => {
-                //     card.clearTint();
-                // });
-
-                // card.on('pointerup', () => {
-                //     // this.remove(card);
-                //
-                //     const indexToRemove = this.cards.findIndex(cardInArray => cardInArray.id === card.id);
-                //     Phaser.Utils.Array.RemoveAt(this.cards, indexToRemove);
-                //     this.render();
-                //
-                //     eventsCenter.emit('move-card-to-open-deck', card);
-                // });
-
                 this.cards.push(card);
             }
         })
 
         this.shuffleCards();
+
+        eventsCenter.on('request-card', this.checkAndMoveCard, this);
     }
 
     private ejectTopCard(): ResourceCard | null {
         const card = this.cards.pop();
 
+        console.log('cards.length', this.cards.length);
+
         return card !== undefined ? card : null;
     }
 
     public initGameObjectLogic() {
-        this.setSize(200, 200);
+        this.setSize(220, 400);
         this.setX(200);
         this.setY(200);
 
@@ -60,6 +49,9 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
         this.backCard = new Phaser.GameObjects.Image(this.scene, 0, 0, texture);
         this.backCard.setDisplaySize(200, 300);
         this.backCard.setInteractive();
+
+        this.textObject = new Phaser.GameObjects.Text(this.scene, -50, 170, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
+        this.textObject1 = new Phaser.GameObjects.Text(this.scene, -50, 210, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
 
         this.backCard.on('pointerover', () => {
             this.backCard.setDisplaySize(220, 330);
@@ -70,30 +62,31 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
             this.backCard.setDisplaySize(200, 300);
         });
 
-        eventsCenter.on('request-card', this.checkAndMoveCard, this);
+        autorun(() => {
+            this.textObject1.text = `ActivePlayerId: ${gameState.activePlayerId}`;
+        });
     }
 
     private checkAndMoveCard(args): void {
-        if (args.type === 'Resource') {
-            // TODO: switch to switch :-D
-            if (args.requester === 'OpenResourceDeck') {
-                const card = this.ejectTopCard();
-                eventsCenter.emit('move-card-to-open-deck', card);
-            }
+        if (args.type === 'Resource' && args.requester) {
+            args.card = this.ejectTopCard();
+
+            eventsCenter.emit('receive-card', args);
         }
+
+        this.render();
     }
 
     private render() {
         this.removeInteractive();
         this.removeAll();
-        // this.cards.forEach((card, index) => {
-        //     card.setX(index * 50);
-        //     card.setY(index * 10);
-        //
-        //     this.add(card);
-        // });
+
+        this.textObject.text = `Cards: ${this.cards.length}`;
 
         this.add(this.backCard);
+        this.add(this.textObject);
+        this.add(this.textObject1);
+
         this.setInteractive();
     }
 

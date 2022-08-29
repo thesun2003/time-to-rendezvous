@@ -1,5 +1,5 @@
 import "phaser";
-import ResourceDeck from "./classes/ResourceDeck";
+import ResourceDeck from "./GameObjects/ResourceDeck";
 
 export default class GameScene extends Phaser.Scene {
     delta!: number;

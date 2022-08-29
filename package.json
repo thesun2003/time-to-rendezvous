@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/thesun2003/time-to-rendezvous#readme",
   "dependencies": {
+    "mobx": "^6.6.1",
     "phaser": "^3.55.2",
     "terser-webpack-plugin": "^5.3.4",
     "webpack-merge": "^5.8.0"

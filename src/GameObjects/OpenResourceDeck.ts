@@ -1,4 +1,4 @@
-import ResourceCard from "@app/classes/ResourceCard";
+import ResourceCard from "@app/GameObjects/ResourceCard";
 import eventsCenter from '@app/EventsCenter';
 
 const maxCardsAmount = 5;
@@ -55,7 +55,15 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         this.setX(200);
         this.setY(800);
 
-        eventsCenter.on('move-card-to-open-deck', this.addCard, this);
+        eventsCenter.on('receive-card', this.checkAndReceiveCard, this);
+    }
+
+    private checkAndReceiveCard(args) {
+        if (args.requester === 'OpenResourceDeck' &&
+            args.type === 'Resource')
+        {
+            this.addCard(args.card);
+        }
     }
 
     public addCard(card: ResourceCard) {
