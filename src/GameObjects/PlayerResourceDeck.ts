@@ -42,7 +42,7 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
     }
 
     public initGameObjectLogic() {
-        this.setSize(1500, 200);
+        this.setSize(200, 200);
         this.setX(600);
         this.setY(200);
 

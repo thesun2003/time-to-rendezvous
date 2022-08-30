@@ -5,14 +5,13 @@ import OpenResourceDeck from "@app/GameObjects/OpenResourceDeck";
 import Player from "@app/classes/Player";
 import Button from '@app/UI/Button';
 import eventsCenter from '@app/EventsCenter';
-import {gameState} from '@app/Stores/GameStore'
+import {gameState, turnState} from '@app/Stores/GameStore'
 
 export default class ResourceDeckScene extends Phaser.Scene {
     resourceDeck!: ResourceDeck;
     openResourceDeck!: OpenResourceDeck;
     players: Array<Player> = [];
     activePlayer!: Player;
-    activePlayerIndex: number = 0;
 
     constructor() {
         super({
@@ -91,6 +90,8 @@ export default class ResourceDeckScene extends Phaser.Scene {
         }
 
         this.setActivePlayer(gameState.activePlayerIndex);
+
+        turnState.reset();
     }
 
     private onClick2(star: Phaser.Physics.Arcade.Image): () => void {

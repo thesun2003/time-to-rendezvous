@@ -1,7 +1,7 @@
 import ResourceCard, {resourceCardColoursList} from "@app/GameObjects/ResourceCard";
 import eventsCenter from '@app/EventsCenter';
 import {autorun} from "mobx";
-import {gameState} from '@app/Stores/GameStore'
+import {gameState, turnState} from '@app/Stores/GameStore'
 
 export default class ResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
@@ -41,26 +41,39 @@ export default class ResourceDeck extends Phaser.GameObjects.Container {
     }
 
     public initGameObjectLogic() {
-        this.setSize(220, 400);
+        this.setSize(220, 330);
         this.setX(200);
         this.setY(200);
 
         const texture = this.scene.textures.get(`resource-card-back`);
-        this.backCard = new Phaser.GameObjects.Image(this.scene, 0, 0, texture);
-        this.backCard.setDisplaySize(200, 300);
-        this.backCard.setInteractive();
+        this.backCard = new Phaser.GameObjects.Image(this.scene, 0, 0, texture)
+            .setDisplaySize(200, 300)
+            .setInteractive()
+            .on('pointerover', () => {
+                // this.backCard.setTint(0xff0000);
+                this.backCard.setDisplaySize(220, 330);
+            })
+            .on('pointerout', () => {
+                // this.backCard.clearTint();
+                this.backCard.setDisplaySize(200, 300);
+            })
+            .on('pointerup', () => {
+                console.log('ableRequestResourceCard', turnState.ableRequestResourceCard);
+
+                if (turnState.ableRequestResourceCard) {
+                    const args = {
+                        type: 'Resource',
+                        requester: 'PlayerResourceDeck',
+                        playerId: gameState.activePlayerId,
+                    };
+                    this.checkAndMoveCard(args);
+
+                    turnState.decreaseResourceCardsAvailableForRequest();
+                }
+            });
 
         this.textObject = new Phaser.GameObjects.Text(this.scene, -50, 170, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
         this.textObject1 = new Phaser.GameObjects.Text(this.scene, -50, 210, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
-
-        this.backCard.on('pointerover', () => {
-            this.backCard.setDisplaySize(220, 330);
-        });
-
-        this.backCard.on('pointerout', () => {
-            // this.backCard.clearTint();
-            this.backCard.setDisplaySize(200, 300);
-        });
 
         autorun(() => {
             this.textObject1.text = `ActivePlayerId: ${gameState.activePlayerId}`;

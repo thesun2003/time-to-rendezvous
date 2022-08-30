@@ -7,29 +7,33 @@ const rainbowMaxNumber = 14;
 
 export default class ResourceCard extends Phaser.GameObjects.Image {
     id!: string;
-    color: ResourceCardColour | null = null;
+    colour!: ResourceCardColour;
     image: string;
     textureKey!: string;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: Phaser.Textures.Texture, color: ResourceCardColour) {
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: Phaser.Textures.Texture, colour: ResourceCardColour) {
         super(scene, x, y, texture);
 
-        this.color = color;
-        this.image = `${this.color}`;
+        this.colour = colour;
+        this.image = `${this.colour}`;
 
         this.id = Phaser.Utils.String.UUID();
 
-        // this.textureKey = `resource-card-${this.color}`;
+        // this.textureKey = `resource-card-${this.colour}`;
         // const texture = scene.textures.get(this.textureKey);
         this.initGameObjectLogic();
     }
 
-    static getTextureByColour(scene: Phaser.Scene, color: ResourceCardColour) {
-        return scene.textures.get(`resource-card-${color}`);
+    static getTextureByColour(scene: Phaser.Scene, colour: ResourceCardColour) {
+        return scene.textures.get(`resource-card-${colour}`);
     }
 
-    static getMaxNumber(color: ResourceCardColour) {
-        return color === 'rainbow' ? rainbowMaxNumber : maxNumber;
+    static getMaxNumber(colour: ResourceCardColour) {
+        return colour === 'rainbow' ? rainbowMaxNumber : maxNumber;
+    }
+
+    public isRainbow(): boolean {
+        return this.colour === 'rainbow';
     }
 
     public initGameObjectLogic() {

@@ -1,5 +1,6 @@
 import ResourceCard from "@app/GameObjects/ResourceCard";
 import eventsCenter from '@app/EventsCenter';
+import {gameState, turnState} from "@app/Stores/GameStore";
 
 const maxCardsAmount = 5;
 
@@ -50,6 +51,12 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         eventsCenter.emit('request-card', {requester: 'OpenResourceDeck', type: 'Resource'}); // TODO: use constants and types
     }
 
+    private ejectSelectedCard(selectedCard: ResourceCard): ResourceCard {
+        this.cards = this.cards.filter(card => card.id !== selectedCard.id);
+
+        return selectedCard;
+    }
+
     public initGameObjectLogic() {
         this.setSize(1500, 200);
         this.setX(200);
@@ -66,10 +73,49 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         }
     }
 
+    private checkAndMoveCard(args): void {
+        if (args.type === 'Resource' && args.requester) {
+            args.card = this.ejectSelectedCard(args.selectedCard);
+
+            eventsCenter.emit('receive-card', args);
+        }
+
+        this.balanceDeck();
+        this.render();
+    }
+
     public addCard(card: ResourceCard) {
-        this.cards.push(card);
+        const updatedCard = this.extendGameLogic(card);
+        this.cards.push(updatedCard);
 
         this.render();
+    }
+
+    private extendGameLogic(card: ResourceCard): ResourceCard {
+        let updatedCard = new ResourceCard(this.scene, 0, 0, ResourceCard.getTextureByColour(this.scene, card.colour), card.colour);
+
+        updatedCard
+            .on('pointerup', () => {
+            console.log('ableRequestResourceCard', turnState.ableRequestResourceCard);
+
+            if (turnState.ableRequestResourceCard) {
+                const args = {
+                    type: 'Resource',
+                    requester: 'PlayerResourceDeck',
+                    playerId: gameState.activePlayerId,
+                    selectedCard: updatedCard,
+                };
+                this.checkAndMoveCard(args);
+
+                if (updatedCard.isRainbow()) {
+                    turnState.setRainbowResourceCardRequested();
+                } else {
+                    turnState.decreaseResourceCardsAvailableForRequest();
+                }
+            }
+        });
+
+        return updatedCard;
     }
 
     private render() {
