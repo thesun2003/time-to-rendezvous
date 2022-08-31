@@ -3,6 +3,7 @@ import eventsCenter from '@app/EventsCenter';
 import {gameState, turnState} from "@app/Stores/GameStore";
 
 const maxCardsAmount = 5;
+const maxRainbowAmount = 3;
 
 export default class OpenResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
@@ -38,13 +39,20 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         }
 
         if (!this.isValid()) {
+            this.discardCards();
             this.balanceDeck();
         }
     }
 
     private isValid(): boolean {
-        // TODO: add logic to validate the deck state according to the rules
-        return true;
+        let rainbowAmount = 0;
+        this.cards.forEach(card => {
+            if (card.isRainbow()) {
+                rainbowAmount += 1;
+            }
+        });
+
+        return rainbowAmount < maxRainbowAmount;
     }
 
     private requestCard(): void {
@@ -84,6 +92,17 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         this.render();
     }
 
+    private discardCards():void {
+        this.cards.forEach(card => {
+            const args = {
+                type: 'Resource',
+                requester: 'DiscardResourceDeck',
+                selectedCard: card,
+            };
+            this.checkAndMoveCard(args);
+        });
+    }
+
     public addCard(card: ResourceCard) {
         const updatedCard = this.extendGameLogic(card);
         this.cards.push(updatedCard);
@@ -114,6 +133,8 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
                 }
             }
         });
+
+        card.destroy();
 
         return updatedCard;
     }

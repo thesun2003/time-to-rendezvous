@@ -59,9 +59,18 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
     }
 
     public addCard(card: ResourceCard) {
-        this.cards.push(card);
+        const updatedCard = this.extendGameLogic(card);
+        this.cards.push(updatedCard);
 
         this.render();
+    }
+
+    private extendGameLogic(card: ResourceCard): ResourceCard {
+        let updatedCard = new ResourceCard(this.scene, 0, 0, ResourceCard.getTextureByColour(this.scene, card.colour), card.colour);
+
+        card.destroy();
+
+        return updatedCard;
     }
 
     private render() {

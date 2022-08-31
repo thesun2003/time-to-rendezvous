@@ -6,10 +6,12 @@ import Player from "@app/classes/Player";
 import Button from '@app/UI/Button';
 import eventsCenter from '@app/EventsCenter';
 import {gameState, turnState} from '@app/Stores/GameStore'
+import DiscardResourceDeck from "@app/GameObjects/DiscardResourceDeck";
 
 export default class ResourceDeckScene extends Phaser.Scene {
     resourceDeck!: ResourceDeck;
     openResourceDeck!: OpenResourceDeck;
+    discardResourceDeck!: DiscardResourceDeck;
     players: Array<Player> = [];
     activePlayer!: Player;
 
@@ -42,6 +44,9 @@ export default class ResourceDeckScene extends Phaser.Scene {
 
         this.openResourceDeck = new OpenResourceDeck(this);
         this.add.existing(this.openResourceDeck);
+
+        this.discardResourceDeck = new DiscardResourceDeck(this);
+        this.add.existing(this.discardResourceDeck);
 
         this.players.push(new Player(this));
         this.players.push(new Player(this));
