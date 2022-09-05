@@ -1,4 +1,4 @@
-type ResourceCardColour = 'pink' | 'white' | 'blue' | 'yellow' | 'orange' | 'black' | 'red' | 'green' | 'rainbow';
+export type ResourceCardColour = 'pink' | 'white' | 'blue' | 'yellow' | 'orange' | 'black' | 'red' | 'green' | 'rainbow';
 
 export const resourceCardColoursList: Array<ResourceCardColour> = ['pink', 'white', 'blue', 'yellow', 'orange', 'black', 'red', 'green', 'rainbow'];
 

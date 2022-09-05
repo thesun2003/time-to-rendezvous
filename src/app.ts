@@ -4,6 +4,7 @@ import GameScene from "./gameScene";
 import ScoreScene from "./scoreScene";
 import GameConfig = Phaser.Types.Core.GameConfig;
 import ResourceDeckScene from "./resourceDeckScene";
+import MapScene from "@app/mapScene";
 
 const config: GameConfig = {
     title: 'Time To Rendezvous',
@@ -19,7 +20,7 @@ const config: GameConfig = {
         height: 1080,
     },
     // scene: [WelcomeScene, GameScene, ScoreScene],
-    scene: [ResourceDeckScene],
+    scene: [MapScene],
     physics: {
         default: "arcade",
         arcade: {
