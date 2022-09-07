@@ -10,6 +10,8 @@ export default class ResourceCard extends Phaser.GameObjects.Image {
     colour!: ResourceCardColour;
     image: string;
     textureKey!: string;
+    deltaX: number = 0;
+    deltaY: number = 0;
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: Phaser.Textures.Texture, colour: ResourceCardColour) {
         super(scene, x, y, texture);

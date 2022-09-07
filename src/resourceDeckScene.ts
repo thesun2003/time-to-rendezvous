@@ -86,6 +86,7 @@ export default class ResourceDeckScene extends Phaser.Scene {
         this.activePlayer = this.players[playerIndex ?? gameState.activePlayerIndex];
 
         gameState.setActivePlayerId(this.activePlayer.id);
+        gameState.setActivePlayer(this.activePlayer);
     }
 
     private endPlayerTurn() {

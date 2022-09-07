@@ -1,5 +1,6 @@
 import {ResourceCardColour} from "@app/GameObjects/ResourceCard";
 import CurvePolygon, {XYArray} from "@app/classes/CurvePolygon";
+import {gameState, turnState} from '@app/Stores/GameStore'
 
 const width = 20;
 const divisions = 32;
@@ -28,11 +29,27 @@ export default class MapRoute extends Phaser.GameObjects.Graphics {
         this.setAlpha(0.1);
         this.fillPath();
 
-        this.on('pointerover', () => {
-            this.setAlpha(1);
-        });
-        this.on('pointerout', () => {
-            this.setAlpha(0.1);
-        });
+        this
+            .on('pointerover', () => {
+                console.log('isDrag???', turnState.isResourceCardDrag);
+                console.log('isDragCard???', turnState.resourceCardDrag);
+                console.log('activePlayer???', gameState.activePlayer);
+
+                const isDrag = turnState.isResourceCardDrag;
+                if (isDrag) {
+                    const resourceCard = turnState.resourceCardDrag;
+
+                    if (resourceCard?.colour !== this.colour) {
+                        this.scene.input.setDefaultCursor('no-drop');
+                    } else {
+                        this.scene.input.setDefaultCursor('copy');
+                        this.setAlpha(1);
+                    }
+                }
+            })
+            .on('pointerout', () => {
+                this.scene.input.setDefaultCursor('default');
+                this.setAlpha(0.1);
+            })
     }
 }

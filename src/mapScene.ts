@@ -17,7 +17,11 @@ export default class MapScene extends Phaser.Scene {
     }
 
     create(): void {
-        this.add.image(550, 350, 'map-us');
+        this.input.setGlobalTopOnly(false);
+
+        this.scene.launch('ResourceDeckScene');
+
+        const mapImage = new Phaser.GameObjects.Image(this, 550, 350, 'map-us');
 
         const mapRoutePortlandSaltLakeCity = new MapRoute(this, 'blue', [
             [120, 220],
@@ -25,13 +29,13 @@ export default class MapScene extends Phaser.Scene {
             [240, 265],
             [310, 350],
         ]);
-        this.add.existing(mapRoutePortlandSaltLakeCity);
 
         const mapRouteHelenaSaltLakeCity = new MapRoute(this, 'pink', [
             [380, 225],
             [310, 350],
         ]);
-        this.add.existing(mapRouteHelenaSaltLakeCity);
+
+        this.add.container(300, 300, [mapImage, mapRouteHelenaSaltLakeCity, mapRoutePortlandSaltLakeCity]);
     }
 
     update(time: number): void {

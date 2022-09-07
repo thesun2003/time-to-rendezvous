@@ -1,5 +1,6 @@
 import ResourceCard from "@app/GameObjects/ResourceCard";
 import eventsCenter from '@app/EventsCenter';
+import {turnState} from "@app/Stores/GameStore";
 
 const initialCardsAmount = 4;
 
@@ -47,6 +48,41 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
         this.setY(200);
 
         eventsCenter.on('receive-card', this.checkAndReceiveCard, this);
+
+        this.scene.input.on('dragstart', (pointer, gameObject) => {
+            // gameObject.scene.children.bringToTop(gameObject);
+
+            const bounds = gameObject.getBounds();
+            gameObject.deltaX = pointer.downX - bounds.x;
+            gameObject.deltaY = pointer.downY - bounds.y;
+
+            // console.log('drag', pointer, bounds);
+
+            turnState.setIsResourceCardDrag(true);
+            turnState.setResourceCardDrag(gameObject as ResourceCard);
+        });
+        this.scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+            gameObject.x = dragX + gameObject.deltaX + 20;
+            gameObject.y = dragY + gameObject.deltaY + 20;
+
+            // gameObject.x = dragX;
+            // gameObject.y = dragY;
+        });
+        this.scene.input.on('drop', function (pointer, gameObject, dropZone) {
+            gameObject.x = dropZone.x;
+            gameObject.y = dropZone.y;
+            gameObject.input.enabled = false;
+        });
+
+        this.scene.input.on('dragend', function (pointer, gameObject, dropped) {
+            if (!dropped)
+            {
+                gameObject.x = gameObject.input.dragStartX;
+                gameObject.y = gameObject.input.dragStartY;
+            }
+            turnState.setIsResourceCardDrag(false);
+            turnState.setResourceCardDrag(null);
+        });
     }
 
     private checkAndReceiveCard(args) {
@@ -70,6 +106,8 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
 
         card.destroy();
 
+        this.scene.input.setDraggable(updatedCard);
+
         return updatedCard;
     }
 
@@ -77,7 +115,7 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
         this.removeInteractive();
         this.removeAll();
         this.cards.forEach((card, index) => {
-            card.setX(index * 50);
+            card.setX(index * 30);
             card.setY(0);
 
             this.add(card);

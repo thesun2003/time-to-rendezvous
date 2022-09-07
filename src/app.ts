@@ -20,7 +20,7 @@ const config: GameConfig = {
         height: 1080,
     },
     // scene: [WelcomeScene, GameScene, ScoreScene],
-    scene: [MapScene],
+    scene: [MapScene, ResourceDeckScene],
     physics: {
         default: "arcade",
         arcade: {
