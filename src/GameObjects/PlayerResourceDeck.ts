@@ -7,6 +7,7 @@ const initialCardsAmount = 4;
 export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
     playerId!: string;
+    textObject!: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene, playerId: string) {
         super(scene);
@@ -43,9 +44,11 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
     }
 
     public initGameObjectLogic() {
-        this.setSize(200, 200);
-        this.setX(600);
-        this.setY(200);
+        this.setSize(800, 220);
+        this.setX(550);
+        this.setY(900);
+
+        this.textObject = new Phaser.GameObjects.Text(this.scene, 0, -120, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
 
         eventsCenter.on('receive-card', this.checkAndReceiveCard, this);
 
@@ -115,11 +118,12 @@ export default class PlayerResourceDeck extends Phaser.GameObjects.Container {
         this.removeInteractive();
         this.removeAll();
         this.cards.forEach((card, index) => {
-            card.setX(index * 30);
-            card.setY(0);
+            card.setX(index * 150);
+            card.setY(50);
 
             this.add(card);
         });
+        this.add(this.textObject);
         this.setInteractive();
     }
 }

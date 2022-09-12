@@ -1,9 +1,12 @@
 import ResourceCard from "@app/GameObjects/ResourceCard";
 import eventsCenter from '@app/EventsCenter';
 
+const width = 200;
+const height = 120;
+
 export default class DiscardResourceDeck extends Phaser.GameObjects.Container {
     cards: Array<ResourceCard> = [];
-    backCard!: Phaser.GameObjects.Image;
+    // backCard!: Phaser.GameObjects.Image;
     textObject!: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene) {
@@ -18,16 +21,22 @@ export default class DiscardResourceDeck extends Phaser.GameObjects.Container {
     }
 
     public initGameObjectLogic() {
-        this.setSize(220, 330);
-        this.setX(1200);
-        this.setY(200);
+        this.setSize(width, height);
+        this.setDisplaySize(width, height);
+        this.setX(50);
+        this.setY(920);
 
-        const texture = this.scene.textures.get(`resource-card-back`);
-        this.backCard = new Phaser.GameObjects.Image(this.scene, 0, 0, texture)
-            .setDisplaySize(200, 300)
-            .setInteractive();
+        // const graphics = new Phaser.GameObjects.Graphics(this.scene, {lineStyle: {color: 0xff0000, width: 2}});
+        // const bounds = this.getBounds();
+        // graphics.strokeRoundedRect(bounds.x, bounds.y, width, height, 0);
+        // this.scene.add.existing(graphics);
 
-        this.textObject = new Phaser.GameObjects.Text(this.scene, -50, 170, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
+        // const texture = this.scene.textures.get(`resource-card-back`);
+        // this.backCard = new Phaser.GameObjects.Image(this.scene, 0, 0, texture)
+        //     .setDisplaySize(200, 300)
+        //     .setInteractive();
+
+        this.textObject = new Phaser.GameObjects.Text(this.scene, 0, 0, '', { fontFamily: '"Press Start 2P"', fontSize: '36px'});
 
         eventsCenter.on('receive-card', this.checkAndReceiveCard, this);
     }
@@ -56,14 +65,14 @@ export default class DiscardResourceDeck extends Phaser.GameObjects.Container {
     }
 
     private render() {
-        this.removeInteractive();
+        // this.removeInteractive();
         this.removeAll();
 
-        this.textObject.text = `Cards: ${this.cards.length}`;
+        this.textObject.text = `Discarded\nResource\nCards: ${this.cards.length}`;
 
-        this.add(this.backCard);
+        // this.add(this.backCard);
         this.add(this.textObject);
 
-        this.setInteractive();
+        // this.setInteractive();
     }
 }

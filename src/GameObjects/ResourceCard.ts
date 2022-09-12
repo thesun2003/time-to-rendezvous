@@ -39,7 +39,7 @@ export default class ResourceCard extends Phaser.GameObjects.Image {
     }
 
     public initGameObjectLogic() {
-        this.setDisplaySize(200, 200);
+        this.setDisplaySize(132, 200);
         this.setInteractive();
 
         // this.on('pointerover', () => {
@@ -53,12 +53,12 @@ export default class ResourceCard extends Phaser.GameObjects.Image {
 
         // TODO: resize images and replace with setScale(1.1)
         this.on('pointerover', () => {
-            this.setDisplaySize(220, 220);
+            this.setDisplaySize(145, 220);
         });
 
         this.on('pointerout', () => {
             // this.backCard.clearTint();
-            this.setDisplaySize(200, 200);
+            this.setDisplaySize(132, 200);
         });
     }
 }

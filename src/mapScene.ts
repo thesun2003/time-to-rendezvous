@@ -1,7 +1,9 @@
 import "phaser";
-import MapRoute from "@app/GameObjects/MapRoute";
+import MapContainer from "@app/GameObjects/MapContainer";
 
 export default class MapScene extends Phaser.Scene {
+    map!: MapContainer;
+
     constructor() {
         super({
             key: "MapScene"
@@ -21,21 +23,8 @@ export default class MapScene extends Phaser.Scene {
 
         this.scene.launch('ResourceDeckScene');
 
-        const mapImage = new Phaser.GameObjects.Image(this, 550, 350, 'map-us');
-
-        const mapRoutePortlandSaltLakeCity = new MapRoute(this, 'blue', [
-            [120, 220],
-            [140, 220],
-            [240, 265],
-            [310, 350],
-        ]);
-
-        const mapRouteHelenaSaltLakeCity = new MapRoute(this, 'pink', [
-            [380, 225],
-            [310, 350],
-        ]);
-
-        this.add.container(300, 300, [mapImage, mapRouteHelenaSaltLakeCity, mapRoutePortlandSaltLakeCity]);
+        this.map = new MapContainer(this);
+        this.add.existing(this.map);
     }
 
     update(time: number): void {

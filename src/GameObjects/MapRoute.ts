@@ -6,14 +6,17 @@ const width = 20;
 const divisions = 32;
 
 type ResourceCardColourForMapRoute = ResourceCardColour | 'any';
+type Cities = [string, string];
 
 export default class MapRoute extends Phaser.GameObjects.Graphics {
     colour!: ResourceCardColour | 'any';
     curvePolygon!: CurvePolygon;
+    cities!: Cities;
 
-    constructor(scene: Phaser.Scene, colour: ResourceCardColourForMapRoute, points: Array<XYArray>) {
+    constructor(scene: Phaser.Scene, cities: Cities, colour: ResourceCardColourForMapRoute, points: Array<XYArray>) {
         super(scene, { lineStyle: { width: 1, color: 0xd4af37 }, fillStyle: {color: 0x04af37, alpha: 1}});
 
+        this.cities = cities;
         this.colour = colour;
         this.curvePolygon = new CurvePolygon(points, width, divisions);
 

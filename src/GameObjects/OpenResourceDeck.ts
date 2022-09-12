@@ -66,9 +66,9 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
     }
 
     public initGameObjectLogic() {
-        this.setSize(1500, 200);
-        this.setX(200);
-        this.setY(800);
+        this.setSize(220, 300);
+        this.setX(1600);
+        this.setY(350);
 
         eventsCenter.on('receive-card', this.checkAndReceiveCard, this);
     }
@@ -114,6 +114,7 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         let updatedCard = new ResourceCard(this.scene, 0, 0, ResourceCard.getTextureByColour(this.scene, card.colour), card.colour);
 
         updatedCard
+            .setAngle(90)
             .on('pointerup', () => {
             console.log('ableRequestResourceCard', turnState.ableRequestResourceCard);
 
@@ -143,11 +144,17 @@ export default class OpenResourceDeck extends Phaser.GameObjects.Container {
         this.removeInteractive();
         this.removeAll();
         this.cards.forEach((card, index) => {
-            card.setX(index * 250);
-            card.setY(0);
+            card.setX(0);
+            card.setY(index * 150);
 
             this.add(card);
         });
         this.setInteractive();
+
+        // const graphics = new Phaser.GameObjects.Graphics(this.scene, {lineStyle: {color: 0xff0000, width: 2}});
+        // const bounds = this.getBounds();
+        // console.log(bounds);
+        // graphics.strokeRoundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 0);
+        // this.scene.add.existing(graphics);
     }
 }

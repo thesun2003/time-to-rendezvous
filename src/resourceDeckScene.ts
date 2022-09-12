@@ -59,7 +59,7 @@ export default class ResourceDeckScene extends Phaser.Scene {
 
         eventsCenter.on('end-player-turn', this.endPlayerTurn);
 
-        const nextPlayerButton = new Button(this, 500, 500, 'Finish turn', this.endPlayerTurn, this);
+        const nextPlayerButton = new Button(this, 200, 100, 'Finish turn', this.endPlayerTurn, this);
         this.add.existing(nextPlayerButton);
     }
 
